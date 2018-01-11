@@ -29,19 +29,19 @@ Load data:
 
 NYC neighborhoods:
 
-ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=433633ab" "/home/data/nyc_neighborhoods.shp" "nyc_neighborhoods"
+ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=******" "/home/data/nyc_neighborhoods.shp" "nyc_neighborhoods"
 
 NYC census blocks:
 
-ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=433633ab" "/home/data/nyc_census_blocks.shp" "nyc_census_blocks"
+ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=******" "/home/data/nyc_census_blocks.shp" "nyc_census_blocks"
 
 NYC streets:
 
-ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=433633ab" "/home/data/nyc_streets.shp" "nyc_streets"
+ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=******" "/home/data/nyc_streets.shp" "nyc_streets"
 
 NYC subway stations:
 
-ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=433633ab" "/home/data/nyc_subway_stations.shp" "nyc_subway_stations"
+ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=******" "/home/data/nyc_subway_stations.shp" "nyc_subway_stations"
 
 
 Connect to database:
@@ -364,14 +364,19 @@ listen_addresses = '*'
 
 Open QGIS and connect to PostGIS database as below:
 
+1. Click on PostGIS
+2. Create a New PostGIS connection:
+Name: Postgres
+Host: ec2-52-206-154-125.compute-1.amazonaws.com (Public DNS of your EC2)
+Database: gisdata
+SSL mode: disable
+Username: dkakkar (Your username)
+Password: ******* (Your password)
+
  
-
-
-Mkae Sure port 5432 is open in the Security Group:
+Make Sure port 5432 is open in the Security Group of your EC2.
 
  
+        
 
-
-
-
-
+            
