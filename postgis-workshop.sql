@@ -64,10 +64,6 @@ SELECT name FROM nyc_neighborhoods;
 -- What are the names of all the neighborhoods in Brooklyn?
 SELECT name FROM nyc_neighborhoods WHERE boroname = 'Brooklyn';
 
--- What is the number of letters in the names of all the 
--- neighborhoods in Brooklyn?
-SELECT char_length(name) FROM nyc_neighborhoods WHERE boroname = 'Brooklyn';
-
 -- What is the average number of letters and standard 
 -- deviation of number of letters in the names of all the 
 -- neighborhoods in Brooklyn?
@@ -85,27 +81,13 @@ SELECT ST_Area(wkb_geometry)FROM nyc_neighborhoods WHERE name = 'West Village';
 SELECT ST_GeometryType(wkb_geometry), ST_Length(wkb_geometry)
 FROM nyc_streets WHERE name = 'Pelham St';
 
--- What is the GML representation of ‘Broad St’ subway station?
-SELECT ST_AsGML(wkb_geometry)FROM nyc_subway_stations WHERE name = 'Broad St';
-
 -- How many census blocks in New York City have a hole in them? 
 SELECT Count(*)FROM nyc_census_blocks WHERE ST_NumInteriorRings(ST_GeometryN(wkb_geometry,1)) > 0;
 
 
--- What is the area of Manhattan in acres? 
-SELECT Sum(ST_Area(wkb_geometry)) / 4047 FROM nyc_neighborhoods
-WHERE boroname = 'Manhattan';
--- or
-SELECT Sum(ST_Area(wkb_geometry)) / 4047 FROM nyc_census_blocks
-WHERE boroname = 'Manhattan';
-
 ------------------------------------------------------------------------
 -- SECTION 5: Spatial Relationships
 --
-
--- What is the geometry representation of Broad St station?
-SELECT wkb_geometry FROM nyc_subway_stations
-WHERE name = 'Broad St';
 
 -- Use that geometry representation to query back to get the name!
 SELECT name FROM nyc_subway_stations WHERE ST_Equals(wkb_geometry, '0101000020266900000EEBD4CF27CF2141BC17D69516315141');
@@ -118,13 +100,6 @@ SELECT name, boroname FROM nyc_neighborhoods WHERE ST_Intersects(wkb_geometry, S
 
 -- What is the distance between two geometries?
 SELECT ST_Distance(ST_GeometryFromText('POINT(0 5)'),ST_GeometryFromText('LINESTRING(-2 2, 2 2)'));
-
--- What streets are near the Broad Street station?
-SELECT name FROM nyc_streets WHERE ST_DWithin(
-        wkb_geometry,
-        ST_GeomFromText('POINT(583571 4506714)',26918),
-        10
-      );
 
 
 ------------------------------------------------------------------------
@@ -155,21 +130,6 @@ WHERE neighborhoods.boroname = 'Manhattan'
 GROUP BY neighborhoods.name
 ORDER BY white_pct DESC;
 
--- What is the overall racial make-up of New York?
-SELECT
-  100.0 * Sum(popn_white) / Sum(popn_total) AS white_pct,
-  100.0 * Sum(popn_black) / Sum(popn_total) AS black_pct,
-  Sum(popn_total) AS popn_total
-FROM nyc_census_blocks;
-
--- What do subway stop identifiers look like?
-SELECT DISTINCT routes FROM nyc_subway_stations;
-
--- What are the stops on the A-Train?
-SELECT DISTINCT routes
-FROM nyc_subway_stations AS subways
-WHERE strpos(subways.routes,'A') > 0;
-
 -- What is the racial makeup of stops along the A-Train?
 SELECT
   100.0 * Sum(popn_white) / Sum(popn_total) AS white_pct,
@@ -180,57 +140,8 @@ JOIN nyc_subway_stations AS subways
 ON ST_DWithin(census.wkb_geometry, subways.wkb_geometry, 200)
 WHERE strpos(subways.routes,'A') > 0;
 
--- What is the racial makeup of all New York Subway lines?
--- Create extra table
-CREATE TABLE subway_lines ( route char(1) );
-INSERT INTO subway_lines (route) VALUES 
-('A'),('B'),('C'),('D'),('E'),('F'),('G'),
-('J'),('L'),('M'),('N'),('Q'),('R'),('S'),
-('Z'),('1'),('2'),('3'),('4'),('5'),('6'),
-('7');
--- Run the query
-SELECT
-  lines.route,
-  100.0 * Sum(popn_white) / Sum(popn_total) AS white_pct,
-  100.0 * Sum(popn_black) / Sum(popn_total) AS black_pct,
-  Sum(popn_total) AS popn_total
-FROM nyc_census_blocks AS census
-JOIN nyc_subway_stations AS subways
-ON ST_DWithin(census.wkb_geometry, subways.wkb_geometry, 200)
-JOIN subway_lines AS lines
-ON strpos(subways.routes, lines.route) > 0
-GROUP BY lines.route
-ORDER BY black_pct DESC;
-
 ------------------------------------------------------------------------
--- SECTION 7: Spatial Indexing
---
-
-
--- Add the index back
-CREATE INDEX nyc_census_blocks_geom_gist ON nyc_census_blocks USING GIST (wkb_geometry);
-
--- Try the query(watch the timer)
-SELECT blocks.blkid
-FROM nyc_census_blocks blocks
-JOIN nyc_subway_stations subways
-ON ST_Contains(blocks.wkb_geometry, subways.wkb_geometry)
-WHERE subways.name = 'Broad St';
-
--- Drop a spatial index
-DROP INDEX nyc_census_blocks_geom_gist;
-
--- Try a query without the spatial index (watch the timer)
-SELECT blocks.blkid
-FROM nyc_census_blocks blocks
-JOIN nyc_subway_stations subways
-ON ST_Contains(blocks.wkb_geometry, subways.wkb_geometry)
-WHERE subways.name = 'Broad St';
-
-
-
-------------------------------------------------------------------------
--- SECTION 8: Projecting Data
+-- SECTION 7: Projecting Data
 --
 
 -- What is the SRID of our data?
@@ -252,7 +163,7 @@ SELECT f_table_name AS name, srid
 FROM geometry_columns;
 
 ------------------------------------------------------------------------
--- SECTION 9: Geography
+-- SECTION 8: Geography
 --
 
 -- What is the cartesian "distance" from LAX to CDG?
@@ -271,7 +182,7 @@ SELECT ST_Distance(
 
 
 ------------------------------------------------------------------------
--- SECTION 10: Geometry Construction Exercises
+-- SECTION 9: Geometry Construction Exercises
 --
 
 -- How many census blocks don’t contain their own centroid?
@@ -280,12 +191,11 @@ FROM nyc_census_blocks
 WHERE NOT ST_Contains(wkb_geometry, ST_Centroid(wkb_geometry));
 
 -- What is the area of a one unit buffer around the origin? 
--- How different is it from what you would expect? Why?
 SELECT ST_Area(ST_Buffer('POINT(0 0)', 1));
-SELECT pi(), ST_Area(ST_Buffer('POINT(0 0)', 1, 100));
+
 
 ------------------------------------------------------------------------
--- SECTION 11: Validity
+-- SECTION 10: Validity
 --
 
 -- Area of invalid figure-8 polygon
@@ -296,9 +206,6 @@ SELECT ST_IsValid(
          'POLYGON((0 0, 0 1, 1 1, 2 1, 2 2, 1 2, 1 1, 1 0, 0 0))'
        );
 
--- Validity Reason
-SELECT ST_IsValidReason('POLYGON((0 0, 0 1, 1 1, 2 1, 2 2, 1 2, 1 1, 1 0, 0 0))');
-
 -- Find all the invalid neighborhood polygons and what their problem is
 SELECT name, boroname, ST_IsValidReason(wkb_geometry)
 FROM nyc_neighborhoods
@@ -306,7 +213,7 @@ WHERE NOT ST_IsValid(wkb_geometry);
 
 
 ------------------------------------------------------------------------
--- SECTION 12: Equality
+-- SECTION 11: Equality
 --
 
 -- Create example table
@@ -335,14 +242,9 @@ SELECT a.name, b.name, ST_Equals(a.poly, b.poly)
 FROM polygons a, polygons b
 WHERE ST_Equals(a.poly, b.poly);
 
--- Bounds equality
-SELECT a.name, b.name, a.poly = b.poly
-FROM polygons a, polygons b
-WHERE a.poly = b.poly;
-
 
 ------------------------------------------------------------------------
--- SECTION 13: Connecting to QGIS
+-- SECTION 12: Connecting to QGIS
 
 
 Go to : /etc/postgresql/9.6/main/ 
