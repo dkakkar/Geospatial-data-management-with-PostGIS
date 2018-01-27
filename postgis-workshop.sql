@@ -185,7 +185,7 @@ SELECT ST_Distance(
 -- SECTION 9: Geometry Construction Exercises
 --
 
--- How many census blocks don’t contain their own centroid?
+-- How many census blocks donâ€™t contain their own centroid?
 SELECT Count(*) 
 FROM nyc_census_blocks 
 WHERE NOT ST_Contains(wkb_geometry, ST_Centroid(wkb_geometry));
@@ -263,6 +263,9 @@ host    all             all             ::1/128               md5
 Add the following lines to postgresql.conf:
 
 listen_addresses = '*'
+
+Save the file and restart server:
+sudo service postgresql restart
 
 Open QGIS and connect to PostGIS database as below:
 
