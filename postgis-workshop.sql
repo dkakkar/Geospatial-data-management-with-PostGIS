@@ -7,7 +7,7 @@ Download data from : https://github.com/dkakkar/Geospatial-data-management-with-
 
 ssh to ubuntu server and :
 
-Cd /home
+cd /home
 sudo mkdir data
 sudo chown ubuntu:ubuntu data
 
