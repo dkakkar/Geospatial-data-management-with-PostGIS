@@ -23,7 +23,7 @@ Go to Ubuntu server and run:
 
 sudo add-apt-repository ppa:ubuntugis/ppa && sudo apt-get update
 sudo apt-get install gdal-bin
-Ogrinfo
+ogrinfo --version
 
 Load data:
 
