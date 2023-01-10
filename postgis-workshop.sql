@@ -29,20 +29,19 @@ Load data:
 
 NYC neighborhoods:
 
-ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=******" "/home/data/nyc_neighborhoods.shp" "nyc_neighborhoods"
+ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=****" "/home/data/data/nyc_neighborhoods.shp" "nyc_neighborhoods"
 
 NYC census blocks:
 
-ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=******" "/home/data/nyc_census_blocks.shp" "nyc_census_blocks"
+ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=****" "/home/data/data/nyc_census_blocks.shp" "nyc_census_blocks"
 
 NYC streets:
 
-ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=******" "/home/data/nyc_streets.shp" "nyc_streets"
+ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=****" "/home/data/data/nyc_streets.shp" "nyc_streets"
 
 NYC subway stations:
 
-ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=******" "/home/data/nyc_subway_stations.shp" "nyc_subway_stations"
-
+ogr2ogr -nlt PROMOTE_TO_MULTI -overwrite -f "PostgreSQL" PG:"host=localhost user=dkakkar dbname=gisdata password=****" "/home/data/data/nyc_subway_stations.shp" "nyc_subway_stations"
 
 Connect to database:
 psql -h localhost -U dkakkar gisdata
