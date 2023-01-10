@@ -246,7 +246,7 @@ WHERE ST_Equals(a.poly, b.poly);
 -- SECTION 12: Connecting to QGIS
 
 
-Go to : /etc/postgresql/9.6/main/ 
+Go to : /etc/postgresql/14/main/ 
 
 Edit pg_hba.conf to have the following lines:
 
