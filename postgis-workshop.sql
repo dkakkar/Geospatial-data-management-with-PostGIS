@@ -13,7 +13,7 @@ sudo chown ubuntu:ubuntu data
 
 Go to your local folder where data is downloaded and type the following in command line:
 
-scp -r -i ~/.ssh/test-postgis.pem data ubuntu@ec2-34-228-245-75.compute-1.amazonaws.com:/home
+scp -r -i ~/.ssh/cga-web-services.pem  data ubuntu@ec2-34-212-197-127.us-west-2.compute.amazonaws.com:/home/data
 
 ----------------------------------------------------------------
 -- SECTION 2: Install gdal-bin and Load data
